@@ -4,8 +4,10 @@ pipeline {
         stage('Install aws cli and terraform'){
             steps{
                 script{
+                    sh'''
                     chmod 777 ./check_aws_terraform.sh
                     ./check_aws_terraform.sh
+                    '''
                 }
             }
         }
