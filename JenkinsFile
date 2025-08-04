@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    stages{
+        stage('Install aws cli and terraform'){
+            steps{
+                script{
+                    chmod 777 ./check_aws_terraform.sh
+                    ./check_aws_terraform.sh
+                }
+            }
+        }
+        stage('Authenticate to aws account and install aws cli'){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'aws-creds', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY')]) {
+                sh '''
+                    #!/bin/bash
+                    aws configure set aws_access_key_id $AWS_ACCESS_KEY
+                    aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+                    aws configure set default.region us-east-1
+                    aws sts get-caller-identity
+                '''
+            }
+        }
+    }
+        stage('Run the terraform lifecycle commands'){
+            steps{
+                sh '''
+                terraform init
+                terraform plan
+                '''
+            }
+        }
+
+    }
+}
