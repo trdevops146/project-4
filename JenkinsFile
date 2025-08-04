@@ -3,14 +3,12 @@ pipeline {
     stages{
         stage('Install aws cli and terraform'){
             steps{
-                script{
-                    sh'''
-                    cd /var/lib/jenkins/workspace/terraform-job/
-                    chmod 777 ./check_aws_terraform.sh
-                    ./check_aws_terraform.sh
+                sh'''
+                    wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+                    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+                    sudo apt update && sudo apt install terraform
                     '''
                 }
-            }
         }
         stage('Authenticate to aws account and install aws cli'){
             steps{
