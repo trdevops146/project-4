@@ -5,6 +5,7 @@ pipeline {
             steps{
                 script{
                     sh'''
+                    cd /var/lib/jenkins/workspace/terraform-job/
                     chmod 777 ./check_aws_terraform.sh
                     ./check_aws_terraform.sh
                     '''
